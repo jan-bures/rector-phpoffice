@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Rector\PHPOffice\ValueObject;
 
-use Rector\Core\ValueObject\MethodName;
+use Rector\ValueObject\MethodName;
 
 final class PHPExcelMethodDefaultValues
 {

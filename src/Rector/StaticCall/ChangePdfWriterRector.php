@@ -8,10 +8,12 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Util\StringUtils;
+use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\Rector\AbstractRector;
+use Rector\Util\StringUtils;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -22,6 +24,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ChangePdfWriterRector extends AbstractRector
 {
+    /**
+     * @var ValueResolver
+     * @readonly
+     */
+    private $valueResolver;
+
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Change init of PDF writer', [
@@ -62,13 +75,12 @@ CODE_SAMPLE
     /**
      * @param StaticCall $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|int|null
     {
         $callerType = $this->nodeTypeResolver->getType($node->class);
 
         if ($this->isSettingsPdfRendererStaticCall($callerType, $node)) {
-            $this->removeNode($node);
-            return null;
+            return NodeTraverser::REMOVE_NODE;
         }
 
         if ($callerType->isSuperTypeOf(new ObjectType('PHPExcel_IOFactory'))->yes() && $this->nodeNameResolver->isName(

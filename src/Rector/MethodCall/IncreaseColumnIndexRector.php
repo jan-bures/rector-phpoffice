@@ -11,7 +11,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\LNumber;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -89,7 +89,7 @@ CODE_SAMPLE
             return null;
         }
 
-        if (! $this->isName($node->name, '*ByColumnAndRow')) {
+        if (! str_ends_with($this->getName($node->name), 'ByColumnAndRow')) {
             return null;
         }
 

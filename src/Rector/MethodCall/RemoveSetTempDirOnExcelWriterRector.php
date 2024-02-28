@@ -6,8 +6,9 @@ namespace Rector\PHPOffice\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -60,7 +61,7 @@ CODE_SAMPLE
     /**
      * @param MethodCall $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?int
     {
         if (! $this->isObjectType($node->var, new ObjectType('PHPExcel_Writer_Excel5'))) {
             return null;
@@ -70,8 +71,6 @@ CODE_SAMPLE
             return null;
         }
 
-        $this->removeNode($node);
-
-        return $node;
+        return NodeTraverser::REMOVE_NODE;
     }
 }
